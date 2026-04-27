@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:latest
+    restart: always
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: dbname
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - backend
+
+  redis:
+    image: redis:latest
+    restart: always
+    networks:
+      - backend
+
+  node:
+    build:
+      context: ./api
+    ports:
+      - '5000:5000'
+    networks:
+      - backend
+
+  next:
+    build:
+      context: ./frontend
+    ports:
+      - '3000:3000'
+    networks:
+      - frontend
+
+  ai_service:
+    build:
+      context: ./ai_service
+    ports:
+      - '8000:8000'
+    networks:
+      - backend
+
+networks:
+  backend:
+  frontend:
+
+volumes:
+  postgres_data: {}
